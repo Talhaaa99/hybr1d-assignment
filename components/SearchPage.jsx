@@ -12,7 +12,7 @@ const SearchPage = () => {
 
   /* Logic to get results from provided searchAPI */
 
-  const url = `http://hn.algolia.com/api/v1/search?query=${search}`;
+  const url = `https://hn.algolia.com/api/v1/search?query=${search}`;
 
   const handleSearch = (search) => {
     setSearch(search);
