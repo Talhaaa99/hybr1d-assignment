@@ -3,9 +3,10 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import { MinusIcon, PlusIcon } from "@heroicons/react/solid";
 import Comments from "../components/Comments";
+import { ShimmerPostDetails } from "react-shimmer-effects";
 
 const PostDetails = () => {
-  const [current, setCurrent] = useState([]);
+  const [loading, setLoading] = useState(true);
   const [currentAPI, setCurrentAPI] = useState([]);
   const { query } = useRouter();
 
@@ -13,33 +14,39 @@ const PostDetails = () => {
 
   useEffect(() => {
     axios.get(url).then((res) => {
-      setCurrentAPI({
-        id: res.data.id,
-        title: res.data.title,
-        author: res.data.author,
-        url: res.data.url,
-        date: res.data.created_at,
-        children: res.data?.children,
-        points: res.data.points,
-        comments: res.data.num_comments,
-      });
+      setLoading(true);
+      try {
+        setCurrentAPI({
+          id: res.data.id,
+          title: res.data.title,
+          author: res.data.author,
+          url: res.data.url,
+          date: res.data.created_at,
+          children: res.data?.children,
+          points: res.data.points,
+          comments: res.data.num_comments,
+        });
+      } catch (err) {
+        console.log(err);
+      }
+      setLoading(false);
     });
-  }, []);
+  }, [url]);
 
   console.log(currentAPI);
 
-  return (
+  return !loading ? (
     <div className="bg-white">
       {/* Clicked Post */}
       <div className="w-full h-full px-4 rounded-lg py-2 my-4 m-4">
-        <div className="px-4 py-4 border-l-4 border-[#90CAFF] rounded-md shadow-md ease-in-out duration-150 cursor-pointer m-2">
+        <div className="px-4 py-4 border-l-4 border-b-2 border-gray-200 rounded-md ease-in-out duration-150 cursor-pointer m-2">
           <div className="flex justify-start items-center space-x-4 gap-y-2 w-full">
             {currentAPI.title ? (
-              <h2 className="font-semibold text-[#60aff9]  tracking-wide text-xl hover:underline-offset-1">
+              <h2 className="font-semibold text-[#1151d3]  tracking-wide text-xl hover:underline-offset-1">
                 {currentAPI.title}
               </h2>
             ) : (
-              <h2 className="font-semibold text-[#60aff9]  tracking-wide text-xl hover:underline-offset-1">
+              <h2 className="font-semibold text-[#1151d3]  tracking-wide text-xl hover:underline-offset-1">
                 Untitled
               </h2>
             )}
@@ -61,34 +68,14 @@ const PostDetails = () => {
       {/* Comments recursion */}
       {currentAPI.children?.map((child) => {
         return (
-          <div>
-            <Comments key={child?.id} child={child} />;
+          <div key={child?.id}>
+            <Comments child={child} />;
           </div>
         );
       })}
-
-      {/* <div key={currentAPI.id}>
-        <div className="flex space-x-3">
-          <h5>{currentAPI.author}</h5>
-          <h5>on</h5>
-          <h5>{new Date(currentAPI.created_at).toLocaleDateString()}</h5>
-          {expand ? (
-            <MinusIcon
-              className="h-5 w-5 cursor-pointer"
-              onClick={() => setExpand(!expand)}
-            />
-          ) : (
-            <PlusIcon
-              className="h-5 w-5 cursor-pointer"
-              onClick={() => setExpand(!expand)}
-            />
-          )}
-        </div>
-        <div>
-          <h3>{currentAPI.text}</h3>
-      </div>
-        </div> */}
     </div>
+  ) : (
+    <ShimmerPostDetails card cta variant="SIMPLE" />
   );
 };
 export default PostDetails;

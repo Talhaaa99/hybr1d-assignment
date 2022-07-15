@@ -8,14 +8,14 @@ const Comments = ({ child }) => {
   return (
     <div className="w-full h-full ml-4">
       {/* Comments recursion */}
-      <div className="font-lg border-l-4 border-[#90CAFF] ml-8 pl-4">
+      <div className="font-lg border-l-4 border-b-2 border-gray-200 ml-8 pl-4 ">
         <div className="flex space-x-3 items-center justify-start pt-2">
           {child.author ? (
             <h5 className="font-semibold">{child.author}</h5>
           ) : (
             <h5>unknown</h5>
           )}
-          <h5 className="text-gray-500 text-sm">
+          <h5 className="text-gray-400 text-sm">
             {new Date(child.created_at).toLocaleDateString()}
           </h5>
           {expand ? (
@@ -30,13 +30,13 @@ const Comments = ({ child }) => {
             />
           )}
         </div>
-        <p className="my-2 pb-1">{htmlToText(child.text)}</p>
+        <p className="my-2 pb-1 text-gray-500">{htmlToText(child.text)}</p>
         <div>
           {expand === true
             ? child.children?.map((item) => {
                 return (
-                  <div>
-                    <Comments key={item.id} child={item} />;
+                  <div key={item.id}>
+                    <Comments child={item} />;
                   </div>
                 );
               })
